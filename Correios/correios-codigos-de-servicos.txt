@@ -1,0 +1,8 @@
+Código Serviço (nCdServico=)
+
+40010 SEDEX Varejo 
+40045 SEDEX a Cobrar Varejo 
+40215 SEDEX 10 Varejo 
+40290 SEDEX Hoje Varejo 
+41106 PAC Varejo 
+ 

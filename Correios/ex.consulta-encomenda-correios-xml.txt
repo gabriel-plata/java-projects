@@ -1,0 +1,32 @@
+http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?
+nCdEmpresa=
+&
+sDsSenha=
+&
+sCepOrigem=700029 00
+&
+sCepDestino=71939360
+&
+nVlPeso=1
+&
+nCdFormato=1
+&
+nVlComprimento=30
+&
+nVlAltura=30
+&
+nVlLargura=3 0
+&
+sCdMaoPropria=n
+&
+nVlValorDeclarado=0
+&
+sCdAvisoRecebimento=n
+&
+nCdServico=40010
+&
+nVlDiametro=0
+&
+StrRetorno=xml
+&
+nIndicaCalculo=3  

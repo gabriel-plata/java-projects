@@ -8,7 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<c:import url="/WEB-INF/jsp/cabeccalho.jsp" />
+	<c:import url="/WEB-INF/jsp/cabecalho.jsp" />
 	<h3>${json}</h3>
 	<c:import url="/WEB-INF/jsp/rodape.jsp" />
 </body>

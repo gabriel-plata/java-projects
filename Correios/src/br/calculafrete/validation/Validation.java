@@ -81,192 +81,136 @@ public class Validation {
 	
 	public ArrayList<String[]> validar(){
 		ArrayList<String[]> retorno = new ArrayList<String[]>();
-		int posicao;
-		String prop,erro;
 		int formatoInt = 0; //opção inexistente, só fica zero se não for selecionado o formato
-		String[] res = new String[2];
-		
-		//Inicialiazação do retorno
-		res[1] = null;
-		res[0] = "cepDestino";
-		retorno.add(res);
-		res[0] = "cepOrigem";
-		retorno.add(res);
-		res[0] = "peso";
-		retorno.add(res);
-		res[0] = "tipoServico";
-		retorno.add(res);
-		res[0] = "formato";
-		retorno.add(res);
-		res[0] = "comprimento";
-		retorno.add(res);
-		res[0] = "altura";
-		retorno.add(res);
-		res[0] = "largura";
-		retorno.add(res);
-		res[0] = "diametro";
-		retorno.add(res);
-		res[0] = "maoPropria";
-		retorno.add(res);
-		res[0] = "valorDeclarado";
-		retorno.add(res);
-		res[0] = "avisoRecebimento";
-		retorno.add(res);
-		res[0] = "somaDimensoes";
-		retorno.add(res);
-		res[0] = "somaComprimento2xDiametro";
-		retorno.add(res);
-		
-		
 		
 		//Validação cepOrigem
-		prop = "cepOrigem";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoCepOrigem = new String[2];
+		retornoCepOrigem[0] = "cepOrigem";
+		retornoCepOrigem[1] = null;
 		if(!validaCep(this.cepOrigem)) {
-			erro = "CEP de origem inválido";
+			retornoCepOrigem[1] = "CEP de origem inválido";
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoCepOrigem);
 		
 		//Validação do cepDestino
-		prop = "cepDestino";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoCepDestino = new String[2];
+		retornoCepDestino[0] = "cepDestino";
+		retornoCepDestino[1] = null;
 		if(!validaCep(this.cepDestino)) {
-			erro = "CEP de destino inválido";
+			retornoCepDestino[1] = "CEP de destino inválido";
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoCepDestino);
 		
 		//Validação do peso
-		prop = "peso";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoPeso = new String[2];
+		retornoPeso[0] = "peso";
+		retornoPeso[1] = null;
 		if(!validaFloat(this.peso)) {
-			erro = "Peso inválido";
+			retornoPeso[1] = "Peso inválido";
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoPeso);
 		
 		//Validação do valorDeclarado
-		prop = "valorDeclarado";
-		erro = null;
-		posicao = findPositionRetorno(retorno,"valorDeclarado");
-		if(valorDeclaradoCheckbox.equals(null)) {
-			erro = null;
+		String[] retornoValorDeclarado = new String[2];
+		retornoValorDeclarado[0] = "valorDeclarado";
+		retornoValorDeclarado[1] = null;
+		if(this.valorDeclaradoCheckbox == null) {
+			retornoValorDeclarado[1] = null;
 		}else if(!validaFloat(this.valorDeclarado)) {
-			erro = "Valor declarado inválido";
+			retornoValorDeclarado[1] = "Valor declarado inválido";
 		}else if(Float.parseFloat(this.valorDeclarado) > this.MAX_VALOR_DECLARADO) {
-			erro = "Valor declarado máximo é " + this.MAX_VALOR_DECLARADO + " reais";
+			retornoValorDeclarado[1] = "Valor declarado máximo é " + this.MAX_VALOR_DECLARADO + " reais";
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoValorDeclarado);
 		
 		//Validação do tipoServico
-		prop = "tipoServico";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoTipoServico = new String[2];
+		retornoTipoServico[0] = "tipoServico";
+		retornoTipoServico[1] = null;
 		if(!validaInt(this.tipoServico)) {
-			erro = "Tipo de Serviço obrigatório";
+			retornoTipoServico[1] = "Tipo de Serviço obrigatório";
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoTipoServico);
 				
 		//Validação do formato
-		prop = "formato";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoFormato = new String[2];
+		retornoFormato[0] = "formato";
+		retornoFormato[1] = null;
 		if(!validaInt(this.formato)) {	
-			erro = "Formato obrigatório";
+			retornoFormato[1] = "Formato obrigatório";
 		}else {
 			formatoInt = Integer.parseInt(this.formato);
 			if(formatoInt == 3 && 
 			retorno.get(findPositionRetorno(retorno,"peso"))[1] == null && 
 			Integer.parseInt(this.peso) > this.MAX_PESO_ENVELOPE ) {
-				erro = "O peso máximo para envolopes é: " + this.MAX_PESO_ENVELOPE;
+				retornoFormato[1] = "O peso máximo para envolopes é: " + this.MAX_PESO_ENVELOPE;
 			}
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoFormato);
 		
 		//Validação do comprimento
-		prop = "comprimento";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoComprimento = new String[2];
+		retornoComprimento[0] = "comprimento";
+		retornoComprimento[1] = null;
 		if(!validaInt(this.comprimento)) {
-			erro = "Comprimento obrigatório";
+			retornoComprimento[1] = "Comprimento obrigatório";
 		}else {
 			int comprimentoInt = Integer.parseInt(this.comprimento);
 			if( comprimentoInt > this.MAX_COMPRIMENTO) {
-				erro = "Comprimento máximo é: " + this.MAX_COMPRIMENTO;
+				retornoComprimento[1] = "Comprimento máximo é: " + this.MAX_COMPRIMENTO;
 			}else if( comprimentoInt < this.MIN_COMPRIMENTO ) {
-				erro = "Comprimento mínimo é: " + this.MIN_COMPRIMENTO;
+				retornoComprimento[1] = "Comprimento mínimo é: " + this.MIN_COMPRIMENTO;
 			}
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoComprimento);
 		
 		//Validação da altura
-		prop = "altura";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoAltura = new String[2];
+		retornoAltura[0] = "altura";
+		retornoAltura[1] = null;
 		if(!validaInt(this.altura)) {
-			erro = "Altura obrigatória";
+			retornoAltura[1] = "Altura obrigatória";
 		}else {
 			int alturaInt = Integer.parseInt(this.altura);
 			if(formatoInt == 3 && alturaInt != this.ALTURA_ENVELOPE ){
-				erro = "Altura do envelope tem que ser: " + this.ALTURA_ENVELOPE;
+				retornoAltura[1] = "Altura do envelope tem que ser: " + this.ALTURA_ENVELOPE;
 			}else if(alturaInt > this.MAX_ALTURA) {
-				erro = "Altura máxima é: " + this.MAX_ALTURA;
+				retornoAltura[1] = "Altura máxima é: " + this.MAX_ALTURA;
 			}else if( alturaInt < this.MIN_ALTURA ) {
-				erro = "Altura mínima é: " + this.MIN_ALTURA;
+				retornoAltura[1] = "Altura mínima é: " + this.MIN_ALTURA;
 			}
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoAltura);
 		
 		//Validação da largura
-		prop = "largura";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoLargura = new String[2];
+		retornoLargura[0] = "largura";
+		retornoLargura[1] = null;
 		if(!validaInt(this.largura)) {
-			erro = "Largura obrigatória";
+			retornoLargura[1] = "Largura obrigatória";
 		}else {
 			int larguraInt = Integer.parseInt(this.largura);
 			if( larguraInt > this.MAX_LARGURA ) {
-				erro = "A largura máxima é: " + this.MAX_LARGURA;
+				retornoLargura[1] = "A largura máxima é: " + this.MAX_LARGURA;
 			}else if( larguraInt < this.MIN_LARGURA ) {
-				erro = "A largura mínima é: " + this.MIN_LARGURA;
+				retornoLargura[1] = "A largura mínima é: " + this.MIN_LARGURA;
 			}
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoLargura);
 		
 		//Validação do diametro
-		prop = "formato";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoDiametro = new String[2];
+		retornoDiametro[0] = "diametro";
+		retornoDiametro[1] = null;
 		if(!validaInt(this.diametro)) {
-			erro = "Formato obrigatório";
+			retornoDiametro[1] = "Diâmetro obrigatório";
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoDiametro);
 		
 		//Validação da soma das dimensões
-		prop = "somaDimensoes";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoSomaDimensoes = new String[2];
+		retornoSomaDimensoes[0] = "somaDimensoes";
+		retornoSomaDimensoes[1] = null;
 		if(retorno.get(findPositionRetorno(retorno,"largura"))[1] == null &&
 		retorno.get(findPositionRetorno(retorno,"altura"))[1] == null &&
 		retorno.get(findPositionRetorno(retorno,"comprimento"))[1] == null) {
@@ -274,28 +218,28 @@ public class Validation {
 			int alturaInt = Integer.parseInt(this.altura);
 			int comprimentoInt = Integer.parseInt(this.comprimento);
 			if ( larguraInt + alturaInt + comprimentoInt > this.MAX_SOMA_DIMENSOES) {
-				erro = "A soma das dimensões não pode ser superior a: " + this.MAX_SOMA_DIMENSOES;
+				retornoSomaDimensoes[1] = "A soma das dimensões não pode ser superior a: " + this.MAX_SOMA_DIMENSOES;
 			}
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoSomaDimensoes);
 		
 		//Validação soma do comprimento com 2x diametro
-		prop = "somaComprimento2xDiametro";
-		erro = null;
-		posicao = findPositionRetorno(retorno,prop);
+		String[] retornoSomaComprimento2xDiametro = new String[2];
+		retornoSomaComprimento2xDiametro[0] = "somaComprimento2xDiametro";
+		retornoSomaComprimento2xDiametro[1] = null;
 		if(retorno.get(findPositionRetorno(retorno,"comprimento"))[1] == null &&
 		retorno.get(findPositionRetorno(retorno,"diametro"))[1] == null) {
 			int diametroInt = Integer.parseInt(this.diametro);
 			int comprimentoInt = Integer.parseInt(this.comprimento);
 			if( diametroInt * 2 + comprimentoInt > this.MAX_SOMA_COMPRIMENTO_2XDIAMETRO) {
-				erro = "A soma do comprimento com 2 vezes o diametro não pode ultrapassar: " + this.MAX_SOMA_COMPRIMENTO_2XDIAMETRO;
+				retornoSomaComprimento2xDiametro[1] = "A soma do comprimento com 2 vezes o diametro não pode ultrapassar: " + this.MAX_SOMA_COMPRIMENTO_2XDIAMETRO;
 			}	
 		}
-		res[0] = prop;
-		res[1] = erro;
-		retorno.set(posicao, res);
+		retorno.add(retornoSomaComprimento2xDiametro);
+		System.out.println("Retorno de erros:");
+		for(int i = 0 ; i < retorno.size() ; i++) {
+			System.out.println(retorno.get(i)[0] + ": " + retorno.get(i)[1]);
+		}
 		
 		return retorno;
 	}

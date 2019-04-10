@@ -2,7 +2,6 @@ package br.calculafrete;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -60,7 +59,7 @@ public class CalculaFrete extends HttpServlet implements Servlet{
 		ArrayList<String[]> erros = valid.validar();
 		int errosEncontrados = 0;
 		for(int i = 0 ; i < erros.size() ; i++) {
-			if(!erros.get(i)[1].equals(null)) {
+			if(erros.get(i)[1] != null) {
 				errosEncontrados++;
 			}
 		}
@@ -81,34 +80,37 @@ public class CalculaFrete extends HttpServlet implements Servlet{
 			encomenda.setDiametro(Integer.parseInt(diametro));
 			encomenda.setFormato(Integer.parseInt(formato));
 			
-			if(avisoRecebimento.equals("on")) {
+			if(avisoRecebimento != null) {
 				encomenda.setAvisoRecebimento('S');
 			}else {
 				encomenda.setAvisoRecebimento('N');
 			}
 			
-			if(maoPropria.equals("on")) {
+			if(maoPropria != null) {
 				encomenda.setMaoPropria('S');
 			}else {
 				encomenda.setMaoPropria('N');
 			}
 			
-			if(valorCheckbox.equals("on")) {
+			if(valorCheckbox != null) {
 				encomenda.setValorDeclarado(Float.parseFloat(valorDeclarado));
 			}else {
 				encomenda.setValorDeclarado(0f);
 			}
 			
-			String json = getRetornoApi(encomenda);
+			String json = null;
+			
+			json = getRetornoApi(encomenda);
+			
 			request.setAttribute("json", json);
 			RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/jsp/show.jsp");
 			rd.forward(request, response);
 		}
 	}
 	
-	private String getRetornoApi(Encomenda encomenda) {
+	private String getRetornoApi(Encomenda encomenda) throws IOException {
 		URL url;
-		String json;
+		String json = null;
 		URLConnection urlConnection;
 		try {
 			url = new URL("http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?" + 
@@ -132,27 +134,44 @@ public class CalculaFrete extends HttpServlet implements Servlet{
 			throw new RuntimeException(e);
 		}
 		
-		try {
-			urlConnection = url.openConnection();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 		
-		InputStream is;
-		try {
-			is = urlConnection.getInputStream();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-        StringBuilder jsonSb = new StringBuilder();
-
-        br.lines().forEach(l -> jsonSb.append(l.trim()));
-
-        json = jsonSb.toString();
+		urlConnection = url.openConnection();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 		
-		return json;
+		String retornoXML = reader.readLine();
+		json = retornoXML;
+        while( retornoXML != null){
+            json += retornoXML;
+            retornoXML = reader.readLine();
+        }
+        
+        return json;
+		
+//		DataInputStream is;
+//		try {
+//			is = new DataInputStream(urlConnection.getInputStream());
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
+		
+//		String inputLine;
+//		File fileXML = new File("retornoXML");
+//		FileWriter f = new FileWriter(fileXML);
+//		while ((inputLine = is. readLine()) != null) {
+//			f.write(inputLine);
+//		}
+//		f.close();
+//		inStream.close();
+//		
+//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//
+//        StringBuilder jsonSb = new StringBuilder();
+//
+//        br.lines().forEach(l -> jsonSb.append(l.trim()));
+//
+//        json = jsonSb.toString();
+//		
+        
 	}
 	
 	public void init(ServletConfig config) throws ServletException {

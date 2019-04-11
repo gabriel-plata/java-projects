@@ -1,6 +1,10 @@
 package br.calculafrete;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -16,6 +20,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import br.calculafrete.validation.Validation;
 
@@ -98,19 +105,41 @@ public class CalculaFrete extends HttpServlet implements Servlet{
 				encomenda.setValorDeclarado(0f);
 			}
 			
-			String json = null;
 			
-			json = getRetornoApi(encomenda);
+			Servicos retorno = getRetornoApi(encomenda);
 			
-			request.setAttribute("json", json);
+			request.setAttribute("retorno", retorno);
 			RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/jsp/show.jsp");
 			rd.forward(request, response);
 		}
 	}
 	
-	private String getRetornoApi(Encomenda encomenda) throws IOException {
+	private Servicos getRetornoApi(Encomenda encomenda) throws IOException {
+		
+//		Client client = ClientBuilder.newClient();
+//		String pesquisa = "http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?" + 
+//				"nCdEmpresa=" + 
+//				"&sDsSenha=" +
+//				"&nCdServico=" + encomenda.getTipoServico() +
+//				"&sCepOrigem=" + encomenda.getCepOrigem() +
+//				"&sCepDestino=" + encomenda.getCepDestino() + 
+//				"&nVlPeso=" + encomenda.getPeso() + 
+//				"&nCdFormato=" + encomenda.getFormato() + 
+//				"&nVlComprimento=" + encomenda.getComprimento() + 
+//				"&nVlAltura=" + encomenda.getAltura() + 
+//				"&nVlLargura=" + encomenda.getLargura() + 
+//				"&nVlDiametro=" + encomenda.getDiametro() + 
+//				"&sCdMaoPropria=" + encomenda.getMaoPropria() + 
+//				"&nVlValorDeclarado=" + encomenda.getValorDeclarado() + 
+//				"&sCdAvisoRecebimento=" + encomenda.getAvisoRecebimento() + 
+//				"&StrRetorno=" + encomenda.getRetorno() + 
+//				"&nIndicaCalculo=" + encomenda.getRetornoCalculo();
+//		WebTarget target = client.target(pesquisa);
+//		String conteudo = target.request().get(String.class);
+		
+		
+		
 		URL url;
-		String json = null;
 		URLConnection urlConnection;
 		try {
 			url = new URL("http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?" + 
@@ -137,31 +166,56 @@ public class CalculaFrete extends HttpServlet implements Servlet{
 		
 		urlConnection = url.openConnection();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+		String inputLine;
+		File fileXML = new File("retornoXML.xml");
+		FileWriter f = new FileWriter(fileXML);
+		while ((inputLine = reader.readLine()) != null) {
+			f.write(inputLine);
+		}
+		f.close();
+		reader.close();
 		
-		String retornoXML = reader.readLine();
-		json = retornoXML;
-        while( retornoXML != null){
-            json += retornoXML;
-            retornoXML = reader.readLine();
-        }
+		FileReader fileReader = null;
+		try {
+			//carrega o arquivo XML para um objeto reader
+			fileReader = new FileReader("retornoXML.xml");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		XStream xStream = new XStream(new DomDriver());
+		xStream.alias("Servicos", Servicos.class);
+		xStream.aliasField("Codigo", CServico.class, "codigo");
+		xStream.aliasField("Valor", CServico.class, "valor");
+		xStream.aliasField("PrazoEntrega", CServico.class, "prazoEntrega");
+		xStream.aliasField("ValorSemAdicionais", CServico.class, "valorSemAdicionais");
+		xStream.aliasField("ValorMaoPropria", CServico.class, "valorMaoPropria");
+		xStream.aliasField("ValorAvisoRecebimento", CServico.class, "valorAvisoRecebimento");
+		xStream.aliasField("ValorValorDeclarado", CServico.class, "valorValorDeclarado");
+		xStream.aliasField("EntregaDomiciliar", CServico.class, "entregaDomiciliar");
+		xStream.aliasField("EntregaSabado", CServico.class, "entregaSabado");
+		xStream.aliasField("Erro", CServico.class, "erro");
+		xStream.aliasField("MsgErro", CServico.class, "msgErro");
+		xStream.aliasField("obsFim", CServico.class, "obsFim");
+		xStream.processAnnotations(Servicos.class);
+		Servicos servicos = (Servicos) xStream.fromXML(fileReader);
+		
+		return servicos;
+		
+//		String retornoXML = reader.readLine();
+//		json = retornoXML;
+//        while( retornoXML != null){
+//            json += retornoXML;
+//            retornoXML = reader.readLine();
+//        }
+//        
         
-        return json;
 		
 //		DataInputStream is;
-//		try {
-//			is = new DataInputStream(urlConnection.getInputStream());
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
+//		is = new DataInputStream(urlConnection.getInputStream());
+//		
 		
-//		String inputLine;
-//		File fileXML = new File("retornoXML");
-//		FileWriter f = new FileWriter(fileXML);
-//		while ((inputLine = is. readLine()) != null) {
-//			f.write(inputLine);
-//		}
-//		f.close();
-//		inStream.close();
+
 //		
 //        BufferedReader br = new BufferedReader(new InputStreamReader(is));
 //

@@ -236,10 +236,6 @@ public class Validation {
 			}	
 		}
 		retorno.add(retornoSomaComprimento2xDiametro);
-		System.out.println("Retorno de erros:");
-		for(int i = 0 ; i < retorno.size() ; i++) {
-			System.out.println(retorno.get(i)[0] + ": " + retorno.get(i)[1]);
-		}
 		
 		return retorno;
 	}
